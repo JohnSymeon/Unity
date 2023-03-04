@@ -16,48 +16,48 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-public float HP;
-public float HPmax = 100;
-private int dmg = 10;
+	public float HP;
+	public float HPmax = 100;
+	private int dmg = 10;
 
-private bool DAMAGED = false; //init DAMAGED and counter variables 
-private float counter = 0f;
-private int regen_coeff = 5; //adjust regen_coeff to your prefered regeneration speed 
-private float delay = 5f; //set to preferred uninterrupted time delay to start the regeneration process
+	private bool DAMAGED = false; //init DAMAGED and counter variables 
+	private float counter = 0f;
+	private int regen_coeff = 5; //adjust regen_coeff to your prefered regeneration speed 
+	private float delay = 5f; //set to preferred uninterrupted time delay to start the regeneration process
 
-void Start()
-{
-	HP = HPmax; //init health as maxhealth
-}
-
-void FixedUpdate()
-{
-	if (DAMAGED) //if the player has been damaged at any point
+	void Start()
 	{
-		counter += Time.fixedDeltaTime; //start counting up until you reach the set delay 
-		if (counter >= delay)
+		HP = HPmax; //init health as maxhealth
+	}
+
+	void FixedUpdate()
+	{
+		if (DAMAGED) //if the player has been damaged at any point
 		{
-			DAMAGED = false;  // set DAMAGED to false and allow to regenerate
+			counter += Time.fixedDeltaTime; //start counting up until you reach the set delay 
+			if (counter >= delay)
+			{
+				DAMAGED = false;  // set DAMAGED to false and allow to regenerate
+				counter = 0f;
+			}
+		}
+	
+		if (HP < HPmax && !DAMAGED) //if player has lost health and is allowed to regenerate, start regenerating HP
+		{							
+			HP += Time.fixedDeltaTime*regen_coeff; 
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D collision) 
+	{	
+		if (collision.gameObject.tag == "Bullet") // if a collision happens, damage the player and set the 
+		{						//DAMAGED bool to true and counter to 0, interrupting any 
+							//regeneration that may be happening in FIxedUpdate
+			HP -= dmg;    
+			DAMAGED = true;
 			counter = 0f;
 		}
 	}
-	
-	if (HP < HPmax && !DAMAGED) //if player has lost health and is allowed to regenerate, start regenerating HP
-	{							
-		HP += Time.fixedDeltaTime*regen_coeff; 
-	}
-}
-
-void OnCollisionEnter2D(Collision2D collision) 
-{
-	if (collision.gameObject.tag == "Bullet") // if a collision happens, damage the player and set the 
-	{						//DAMAGED bool to true and counter to 0, interrupting any 
-							//regeneration that may be happening in FIxedUpdate
-		HP -= dmg;    
-		DAMAGED = true;
-		counter = 0f;
-	}
-}
 
 
 
